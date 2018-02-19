@@ -24,10 +24,10 @@ public class EbayService implements IEbayService {
     public List<EbayItem> search(Form form) {
         ClientConfig config = new ClientConfig();
         config.setEndPointAddress("http://svcs.sandbox.ebay.com/services/search/FindingService/v1");
-        config.setApplicationId("IeuanJon-demo-SBX-d10683bd3-e49f70c8");
+        config.setApplicationId("<AppID>");
         config.setGlobalId("EBAY-GB");
 //        config.setEndPointAddress("http://svcs.ebay.com/services/search/FindingService/v1");
-//        config.setApplicationId("IeuanJon-demo-PRD-15d7a0307-9fbdb92e");
+//        config.setApplicationId("<AppID>");
         FindingServicePortType serviceClient = FindingServiceClientFactory.getServiceClient(config);
         FindItemsAdvancedRequest request = new FindItemsAdvancedRequest();
         request.getOutputSelector().add(OutputSelectorType.SELLER_INFO);
@@ -75,7 +75,7 @@ public class EbayService implements IEbayService {
                             .getStartTime()
                             .after(LocalDateTime.now().minus(30, ChronoUnit.MINUTES)))
                     .collect(Collectors.toList());
-            System.out.println("HERE");
+//            System.out.println("HERE");
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
             items.forEach(i -> System.out.println(i.getSellingStatus().getConvertedCurrentPrice().getValue()));
 //            items.stream()
