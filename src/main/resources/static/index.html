@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LocalHost</title>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+</head>
+<body ng-app="ebay" ng-controller="api">
+<h1 class="container">Latest</h1>
+<div class="container">
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Price</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Image</th>
+            <!--<th>URL</th>-->
+        </tr>
+        <tr ng-repeat="x in items | orderBy:'price'">
+            <td><a href={{x.url}}>{{x.title}}</a></td>
+            <td>{{x.price}}</td>
+            <td>{{x.startDate}}</td>
+            <td>{{x.endDate}}</td>
+            <td><img src={{x.img}}></td>
+            <!--<td><a href={{x.url}}>URL</a></td>-->
+        </tr>
+    </table>
+</div>
+<div class="container" ng-controller="filter">
+    <input type="text" ng-model="form.keyword" class="form-control" placeholder="Keyword">
+    <input type="text" ng-model="form.categoryId" class="form-control" placeholder="Category">
+    <input type="number" ng-model="form.pages" class="form-control" placeholder="Number of Pages">
+    <input type="number" ng-model="form.entries" class="form-control" placeholder="Number of Entries">
+    <div class=" form-inline" >
+        <button ng-click="addFilter()" style="float:right" class="btn">Add Filter</button>
+        <div ng-repeat="f in form.filters">
+            <div d2="f">
+                <select ng-model="f.type" class="form-control">
+                    <option value="" disabled>
+                    <option value="Condition">Condition
+                    <option value="Currency">Currency
+                    <option value="MaxPrice">Max Price
+                    <option value="FeedbackScoreMin">Feedback Score Minimum
+                </select>
+                <input type="text" placeholder="Value" class="form-control" ng-model="f.value">
+                <input type="text" placeholder="ParamName" ng-model="f.paramName" class="form-control" ng-show="filtersParam.indexOf(f.type)!=-1">
+                <input type="text" placeholder="ParamVal" ng-model="f.paramVal" class="form-control"ng-show="filtersParam.indexOf(f.type)!=-1">
+                <button type="button" class="btn btn-info" ng-click="removeFilter(f)">Remove</button>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-success" ng-click="submit()">Search</button>
+</div>
+<h3>{{err}}</h3>
+<script>
+    var app = angular.module('ebay', []);
+    app.controller('api', function($scope, $http) {
+        <!--$http.get("/api/search")-->
+        <!--.then(function(response) {-->
+            <!--$scope.items = response.data;-->
+        <!--}, function(response) {-->
+            <!--$scope.err = "There was an error";-->
+        <!--});-->
+    });
+    app.controller('filter', function($scope, $http, $rootScope) {
+        $scope.filtersParam = ["MaxPrice"];
+        $scope.form = {};
+        $scope.form.filters = [{type:"MaxPrice", paramName:"Currency", paramVal:"GBP", value:50.0}];
+        $scope.addFilter = function() {
+            $scope.form.filters.push({type:"", paramName:"", paramVal:""});
+        }
+        $scope.submit = function() {
+            $http.post("/api/search", $scope.form)
+            .then(function(response) {
+                console.log(response.data);
+                $rootScope.items = response.data;
+            }, function(response) {
+                $scope.err = "There was an error";
+            });
+        }
+        $scope.removeFilter = function(filter) {
+            $scope.form.filters.splice($scope.form.filters.indexOf(filter), 1);
+        }
+    });
+</script>
+</body>
+</html>
